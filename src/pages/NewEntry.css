@@ -1,0 +1,241 @@
+.new-entry {
+  padding: 0 16px 24px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.new-entry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0 12px;
+}
+
+.new-entry-back {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-primary);
+  padding: 8px 4px;
+}
+
+.new-entry-title {
+  font-family: var(--font-handwriting);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* Photo Upload */
+.new-entry-photo-section {
+  margin-bottom: 20px;
+}
+
+.photo-upload-btn {
+  width: 100%;
+  padding: 32px;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-bg-card);
+  transition: all 0.2s ease;
+}
+
+.photo-upload-btn:active {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+}
+
+.photo-upload-icon {
+  font-size: 36px;
+}
+
+.photo-upload-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-light);
+}
+
+.photo-input-hidden {
+  display: none;
+}
+
+.photo-preview {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  animation: scaleIn 0.3s ease-out;
+}
+
+.photo-preview img {
+  width: 100%;
+  max-height: 280px;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+}
+
+.photo-remove {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+/* Mood Selector */
+.mood-section {
+  margin-bottom: 20px;
+}
+
+.mood-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-light);
+  margin-bottom: 10px;
+}
+
+.mood-grid {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.mood-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.mood-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 14px;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.mood-btn:active {
+  transform: scale(0.95);
+}
+
+.mood-selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.mood-emoji {
+  font-size: 24px;
+}
+
+.mood-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-light);
+}
+
+.mood-selected .mood-name {
+  color: var(--color-primary-dark);
+}
+
+/* Text Input */
+.text-section {
+  margin-bottom: 24px;
+}
+
+.text-input {
+  width: 100%;
+  min-height: 120px;
+  padding: 16px;
+  font-size: 16px;
+  line-height: 1.6;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
+  resize: none;
+  color: var(--color-text);
+  transition: border-color 0.2s ease;
+  font-family: var(--font-body);
+}
+
+.text-input::placeholder {
+  color: var(--color-text-lighter);
+  font-style: italic;
+}
+
+.text-input:focus {
+  border-color: var(--color-primary-light);
+}
+
+/* Save Button */
+.save-section {
+  padding: 0 0 20px;
+}
+
+.save-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 17px;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+  color: var(--color-text-lighter);
+  transition: all 0.3s ease;
+}
+
+.save-ready {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: white;
+  box-shadow: 0 4px 16px rgba(232, 115, 154, 0.35);
+}
+
+.save-ready:active {
+  transform: scale(0.97);
+}
+
+.save-saving {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Saved Confirmation */
+.new-entry-saved {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.saved-icon {
+  font-size: 72px;
+  animation: popIn 0.5s ease-out;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.saved-text {
+  font-family: var(--font-handwriting);
+  font-size: 28px;
+  color: var(--color-primary);
+  margin-top: 12px;
+  animation: fadeIn 0.3s ease-out 0.2s backwards;
+}

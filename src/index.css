@@ -1,0 +1,118 @@
+:root {
+  --color-bg: #FFF8F5;
+  --color-bg-card: #FFFFFF;
+  --color-primary: #E8739A;
+  --color-primary-light: #FFD6E7;
+  --color-primary-dark: #C7567E;
+  --color-secondary: #7EC8C8;
+  --color-secondary-light: #D4F0F0;
+  --color-accent: #FFB347;
+  --color-accent-light: #FFE4B8;
+  --color-text: #4A3728;
+  --color-text-light: #8B7B6B;
+  --color-text-lighter: #B8A898;
+  --color-border: #F0E6DE;
+  --color-danger: #FF6B6B;
+  --color-lavender: #E8D5F5;
+  --color-mint: #D5F5E3;
+  --color-peach: #FFE5D9;
+  --color-sky: #D5EEF5;
+
+  --font-body: 'Nunito', sans-serif;
+  --font-handwriting: 'Caveat', cursive;
+
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 2px 8px rgba(74, 55, 40, 0.06);
+  --shadow-md: 0 4px 16px rgba(74, 55, 40, 0.08);
+  --shadow-lg: 0 8px 32px rgba(74, 55, 40, 0.12);
+
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  -webkit-appearance: none;
+  background: none;
+}
+
+input, textarea {
+  font-family: var(--font-body);
+  outline: none;
+  border: none;
+  -webkit-appearance: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
