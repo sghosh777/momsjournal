@@ -2,6 +2,27 @@
   padding: 0 16px;
 }
 
+.feed-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  color: var(--color-text-light);
+  font-size: 15px;
+  gap: 12px;
+}
+
+.feed-loading-icon {
+  font-size: 40px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.7; }
+}
+
 .feed-header {
   padding: 20px 0 12px;
 }

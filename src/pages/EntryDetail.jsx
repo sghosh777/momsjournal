@@ -17,20 +17,50 @@ export default function EntryDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [entry, setEntry] = useState(null)
+  const [loading, setLoading] = useState(true)
   const [showDelete, setShowDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
-    const found = getEntryById(id)
-    if (!found) {
-      navigate('/')
-      return
+    let cancelled = false
+    async function load() {
+      try {
+        const found = await getEntryById(id)
+        if (!cancelled) {
+          if (!found) {
+            navigate('/')
+            return
+          }
+          setEntry(found)
+        }
+      } catch (err) {
+        console.error('Failed to load entry:', err)
+        if (!cancelled) navigate('/')
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
     }
-    setEntry(found)
+    load()
+    return () => { cancelled = true }
   }, [id, navigate])
 
-  function handleDelete() {
-    deleteEntry(id)
-    navigate('/')
+  async function handleDelete() {
+    setDeleting(true)
+    try {
+      await deleteEntry(id)
+      navigate('/')
+    } catch (err) {
+      console.error('Failed to delete:', err)
+      setDeleting(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="detail-loading">
+        <span>🌸</span>
+      </div>
+    )
   }
 
   if (!entry) return null
@@ -86,8 +116,8 @@ export default function EntryDetail() {
               <button className="delete-cancel" onClick={() => setShowDelete(false)}>
                 Keep it
               </button>
-              <button className="delete-confirm" onClick={handleDelete}>
-                Delete
+              <button className="delete-confirm" onClick={handleDelete} disabled={deleting}>
+                {deleting ? 'Deleting...' : 'Delete'}
               </button>
             </div>
           </div>

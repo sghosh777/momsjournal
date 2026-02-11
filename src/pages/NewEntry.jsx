@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { saveEntry } from '../utils/storage'
+import { useAuth } from '../utils/AuthContext'
 import './NewEntry.css'
 
 const MOODS = [
@@ -29,6 +30,7 @@ function getRandomPrompt() {
 
 export default function NewEntry() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const fileInputRef = useRef(null)
   const [text, setText] = useState('')
   const [photo, setPhoto] = useState(null)
@@ -43,7 +45,6 @@ export default function NewEntry() {
 
     const reader = new FileReader()
     reader.onload = (ev) => {
-      // Resize image to reduce localStorage usage
       const img = new Image()
       img.onload = () => {
         const canvas = document.createElement('canvas')
@@ -74,16 +75,18 @@ export default function NewEntry() {
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
-  function handleSave() {
+  async function handleSave() {
     if (!text.trim() && !photo) return
 
     setSaving(true)
-    // Small delay for the animation
-    setTimeout(() => {
-      saveEntry({ text: text.trim(), photo, mood })
+    try {
+      await saveEntry(user.uid, { text: text.trim(), photo, mood })
       setSaved(true)
       setTimeout(() => navigate('/'), 600)
-    }, 300)
+    } catch (err) {
+      console.error('Failed to save:', err)
+      setSaving(false)
+    }
   }
 
   const canSave = text.trim().length > 0 || photo

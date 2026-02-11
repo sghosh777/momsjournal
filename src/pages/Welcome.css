@@ -1,0 +1,128 @@
+.welcome {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #FFF0F5 0%, var(--color-bg) 100%);
+}
+
+.welcome-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  pointer-events: none;
+}
+
+.welcome-flower {
+  position: absolute;
+  font-size: 40px;
+  opacity: 0.5;
+}
+
+.f1 {
+  top: 40px;
+  left: 15%;
+  animation: float 3s ease-in-out infinite;
+}
+.f2 {
+  top: 60px;
+  right: 20%;
+  animation: float 3s ease-in-out infinite 0.5s;
+}
+.f3 {
+  top: 100px;
+  left: 50%;
+  animation: float 3s ease-in-out infinite 1s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.welcome-content {
+  text-align: center;
+  animation: fadeIn 0.6s ease-out;
+  max-width: 340px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.welcome-title {
+  font-family: var(--font-handwriting);
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.welcome-tagline {
+  font-size: 16px;
+  color: var(--color-text-light);
+  line-height: 1.5;
+  margin-bottom: 36px;
+}
+
+.welcome-features {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.welcome-feature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-light);
+}
+
+.welcome-feature span:first-child {
+  font-size: 28px;
+}
+
+.welcome-signin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 15px 24px;
+  background: white;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-full);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text);
+  box-shadow: var(--shadow-md);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.welcome-signin:active {
+  transform: scale(0.97);
+  box-shadow: var(--shadow-sm);
+}
+
+.google-icon {
+  flex-shrink: 0;
+}
+
+.welcome-note {
+  font-size: 12px;
+  color: var(--color-text-lighter);
+  margin-top: 16px;
+}

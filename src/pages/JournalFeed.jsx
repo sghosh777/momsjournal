@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getEntries } from '../utils/storage'
+import { useAuth } from '../utils/AuthContext'
 import { format, isToday, isYesterday, parseISO } from 'date-fns'
 import './JournalFeed.css'
 
@@ -28,11 +29,25 @@ function groupByDate(entries) {
 }
 
 export default function JournalFeed() {
+  const { user } = useAuth()
   const [entries, setEntries] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    setEntries(getEntries())
-  }, [])
+    let cancelled = false
+    async function load() {
+      try {
+        const data = await getEntries(user.uid)
+        if (!cancelled) setEntries(data)
+      } catch (err) {
+        console.error('Failed to load entries:', err)
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    load()
+    return () => { cancelled = true }
+  }, [user.uid])
 
   const grouped = groupByDate(entries)
 
@@ -48,7 +63,12 @@ export default function JournalFeed() {
         </div>
       </header>
 
-      {entries.length === 0 ? (
+      {loading ? (
+        <div className="feed-loading">
+          <div className="feed-loading-icon">🌸</div>
+          <p>Loading your moments...</p>
+        </div>
+      ) : entries.length === 0 ? (
         <div className="feed-empty">
           <div className="feed-empty-icon">📝</div>
           <h2 className="feed-empty-title">Your journal awaits</h2>
