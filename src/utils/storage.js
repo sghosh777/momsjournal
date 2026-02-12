@@ -7,7 +7,6 @@ import {
   getDoc,
   query,
   where,
-  orderBy,
   serverTimestamp,
 } from 'firebase/firestore'
 import {
@@ -39,15 +38,17 @@ async function deletePhoto(photoUrl) {
 export async function getEntries(userId) {
   const q = query(
     collection(db, ENTRIES_COL),
-    where('userId', '==', userId),
-    orderBy('createdAt', 'desc')
+    where('userId', '==', userId)
   )
   const snapshot = await getDocs(q)
-  return snapshot.docs.map((d) => ({
+  const entries = snapshot.docs.map((d) => ({
     id: d.id,
     ...d.data(),
     createdAt: d.data().createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
   }))
+  // Sort client-side to avoid needing a Firestore composite index
+  entries.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  return entries
 }
 
 export async function saveEntry(userId, entry) {
