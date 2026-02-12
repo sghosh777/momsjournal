@@ -4,20 +4,32 @@ import {
   signInWithPopup,
   signOut as firebaseSignOut,
 } from 'firebase/auth'
-import { auth, googleProvider } from './firebase'
+import { auth, googleProvider, isFirebaseConfigured } from './firebase'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u)
+    if (!isFirebaseConfigured) {
+      setError('Firebase is not configured. Please add your Firebase secrets to GitHub.')
       setLoading(false)
-    })
-    return unsubscribe
+      return
+    }
+    try {
+      const unsubscribe = onAuthStateChanged(auth, (u) => {
+        setUser(u)
+        setLoading(false)
+      })
+      return unsubscribe
+    } catch (err) {
+      console.error('Auth init failed:', err)
+      setError(err.message)
+      setLoading(false)
+    }
   }, [])
 
   async function signInWithGoogle() {
@@ -37,7 +49,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={{ user, loading, error, signInWithGoogle, signOut }}>
       {children}
     </AuthContext.Provider>
   )

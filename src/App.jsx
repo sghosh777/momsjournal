@@ -7,7 +7,7 @@ import EntryDetail from './pages/EntryDetail'
 import Welcome from './pages/Welcome'
 
 function AppRoutes() {
-  const { user, loading } = useAuth()
+  const { user, loading, error } = useAuth()
 
   if (loading) {
     return (
@@ -19,6 +19,27 @@ function AppRoutes() {
         fontSize: '36px',
       }}>
         🌸
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div style={{
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        textAlign: 'center',
+        fontFamily: 'Nunito, sans-serif',
+      }}>
+        <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔧</div>
+        <h2 style={{ fontSize: '20px', marginBottom: '8px', color: '#4A3728' }}>Setup needed</h2>
+        <p style={{ fontSize: '14px', color: '#8B7B6B', maxWidth: '300px', lineHeight: 1.5 }}>
+          {error}
+        </p>
       </div>
     )
   }
