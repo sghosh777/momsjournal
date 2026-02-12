@@ -132,7 +132,6 @@ export default function NewEntry() {
           ref={fileInputRef}
           type="file"
           accept="image/*"
-          capture="environment"
           onChange={handlePhotoSelect}
           className="photo-input-hidden"
         />
