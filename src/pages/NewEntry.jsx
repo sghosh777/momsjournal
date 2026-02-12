@@ -37,6 +37,7 @@ export default function NewEntry() {
   const [mood, setMood] = useState(null)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [saveError, setSaveError] = useState(null)
   const [placeholder] = useState(getRandomPrompt)
 
   function handlePhotoSelect(e) {
@@ -85,6 +86,7 @@ export default function NewEntry() {
       setTimeout(() => navigate('/'), 600)
     } catch (err) {
       console.error('Failed to save:', err)
+      setSaveError(err.message || 'Failed to save. Please try again.')
       setSaving(false)
     }
   }
@@ -165,6 +167,13 @@ export default function NewEntry() {
           autoFocus
         />
       </div>
+
+      {/* Error Message */}
+      {saveError && (
+        <div className="save-error">
+          {saveError}
+        </div>
+      )}
 
       {/* Save Button */}
       <div className="save-section">

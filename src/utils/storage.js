@@ -53,7 +53,11 @@ export async function getEntries(userId) {
 export async function saveEntry(userId, entry) {
   let photoUrl = null
   if (entry.photo) {
-    photoUrl = await uploadPhoto(userId, entry.photo)
+    try {
+      photoUrl = await uploadPhoto(userId, entry.photo)
+    } catch (err) {
+      console.error('Photo upload failed, saving without photo:', err)
+    }
   }
 
   const docRef = await addDoc(collection(db, ENTRIES_COL), {
