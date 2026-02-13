@@ -4,6 +4,7 @@ import Layout from './components/Layout'
 import JournalFeed from './pages/JournalFeed'
 import NewEntry from './pages/NewEntry'
 import EntryDetail from './pages/EntryDetail'
+import MyCircle from './pages/MyCircle'
 import Welcome from './pages/Welcome'
 
 function AppRoutes() {
@@ -54,6 +55,7 @@ function AppRoutes() {
         <Route path="/" element={<JournalFeed />} />
         <Route path="/new" element={<NewEntry />} />
         <Route path="/entry/:id" element={<EntryDetail />} />
+        <Route path="/circle" element={<MyCircle />} />
       </Route>
     </Routes>
   )

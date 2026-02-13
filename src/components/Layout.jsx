@@ -6,6 +6,7 @@ import './Layout.css'
 const navItems = [
   { path: '/', icon: '📖', label: 'Journal' },
   { path: '/new', icon: '✨', label: 'New', isMain: true },
+  { path: '/circle', icon: '👯‍♀️', label: 'Circle' },
 ]
 
 export default function Layout() {

@@ -66,6 +66,7 @@ export async function saveEntry(userId, entry) {
     text: entry.text || '',
     photo: photoUrl,
     mood: entry.mood || null,
+    visibility: entry.visibility || 'private',
     createdAt: serverTimestamp(),
   })
 
@@ -75,6 +76,7 @@ export async function saveEntry(userId, entry) {
     text: entry.text || '',
     photo: photoUrl,
     mood: entry.mood || null,
+    visibility: entry.visibility || 'private',
     createdAt: new Date().toISOString(),
   }
 }
@@ -90,6 +92,48 @@ export async function deleteEntry(entryId) {
   }
   await deleteDoc(docRef)
 }
+
+// --- Friends ---
+
+const FRIENDS_COL = 'friends'
+
+function formatUSPhone(phone) {
+  const digits = phone.replace(/\D/g, '')
+  if (digits.length === 10) return `+1${digits}`
+  if (digits.length === 11 && digits.startsWith('1')) return `+${digits}`
+  return `+${digits}`
+}
+
+export async function getFriends(userId) {
+  const q = query(
+    collection(db, FRIENDS_COL),
+    where('userId', '==', userId)
+  )
+  const snapshot = await getDocs(q)
+  const friends = snapshot.docs.map((d) => ({
+    id: d.id,
+    ...d.data(),
+    createdAt: d.data().createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+  }))
+  friends.sort((a, b) => a.name.localeCompare(b.name))
+  return friends
+}
+
+export async function addFriend(userId, friend) {
+  const docRef = await addDoc(collection(db, FRIENDS_COL), {
+    userId,
+    name: friend.name.trim(),
+    phone: formatUSPhone(friend.phone),
+    createdAt: serverTimestamp(),
+  })
+  return { id: docRef.id, name: friend.name.trim(), phone: formatUSPhone(friend.phone) }
+}
+
+export async function removeFriend(friendId) {
+  await deleteDoc(doc(db, FRIENDS_COL, friendId))
+}
+
+// --- Entries ---
 
 export async function getEntryById(entryId) {
   const docRef = doc(db, ENTRIES_COL, entryId)

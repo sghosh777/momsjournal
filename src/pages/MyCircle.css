@@ -1,0 +1,270 @@
+.circle {
+  padding: 0 16px 24px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.circle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0 8px;
+}
+
+.circle-back {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-primary);
+  padding: 8px 4px;
+}
+
+.circle-title {
+  font-family: var(--font-handwriting);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.circle-desc {
+  font-size: 14px;
+  color: var(--color-text-light);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.circle-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px;
+  font-size: 32px;
+  gap: 12px;
+  color: var(--color-text-light);
+}
+
+.circle-loading p {
+  font-size: 14px;
+}
+
+/* Empty */
+.circle-empty {
+  text-align: center;
+  padding: 40px 16px;
+}
+
+.circle-empty-icon {
+  font-size: 56px;
+  margin-bottom: 12px;
+}
+
+.circle-empty-title {
+  font-family: var(--font-handwriting);
+  font-size: 24px;
+  margin-bottom: 6px;
+}
+
+.circle-empty-text {
+  font-size: 14px;
+  color: var(--color-text-light);
+  line-height: 1.5;
+  max-width: 250px;
+  margin: 0 auto;
+}
+
+/* Friend List */
+.circle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.friend-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.friend-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary-light), var(--color-lavender));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  flex-shrink: 0;
+}
+
+.friend-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.friend-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.friend-phone {
+  font-size: 13px;
+  color: var(--color-text-lighter);
+}
+
+.friend-remove {
+  font-size: 16px;
+  color: var(--color-text-lighter);
+  padding: 8px;
+  flex-shrink: 0;
+}
+
+.circle-count {
+  font-size: 12px;
+  color: var(--color-text-lighter);
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* Add Friend */
+.add-friend-btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+  border-radius: var(--radius-full);
+  transition: all 0.2s ease;
+}
+
+.add-friend-btn:active {
+  transform: scale(0.97);
+}
+
+.add-friend-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.add-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  transition: border-color 0.2s ease;
+}
+
+.add-input:focus {
+  border-color: var(--color-primary-light);
+}
+
+.add-input::placeholder {
+  color: var(--color-text-lighter);
+}
+
+.add-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.add-cancel {
+  flex: 1;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-light);
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+.add-save {
+  flex: 1;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-lighter);
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  transition: all 0.2s ease;
+}
+
+.add-save-ready {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: white;
+  box-shadow: 0 4px 12px rgba(232, 115, 154, 0.3);
+}
+
+/* Delete Sheet */
+.delete-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 200;
+}
+
+.delete-sheet {
+  width: 100%;
+  max-width: 480px;
+  background: white;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 28px 24px calc(24px + var(--safe-bottom));
+  text-align: center;
+}
+
+.delete-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.delete-desc {
+  font-size: 14px;
+  color: var(--color-text-light);
+  margin-bottom: 20px;
+}
+
+.delete-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.delete-cancel,
+.delete-confirm {
+  flex: 1;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+}
+
+.delete-cancel {
+  background: var(--color-border);
+  color: var(--color-text);
+}
+
+.delete-confirm {
+  background: var(--color-danger);
+  color: white;
+}

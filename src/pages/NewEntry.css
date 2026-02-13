@@ -151,6 +151,59 @@
   color: var(--color-primary-dark);
 }
 
+/* Visibility Toggle */
+.visibility-section {
+  margin-bottom: 20px;
+}
+
+.visibility-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-light);
+  margin-bottom: 10px;
+}
+
+.visibility-toggle {
+  display: flex;
+  gap: 8px;
+}
+
+.vis-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-light);
+  transition: all 0.2s ease;
+}
+
+.vis-active.vis-private {
+  border-color: var(--color-secondary);
+  background: var(--color-secondary-light);
+  color: var(--color-text);
+}
+
+.vis-active.vis-shared {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+
+.visibility-hint {
+  font-size: 12px;
+  color: var(--color-primary);
+  margin-top: 8px;
+  text-align: center;
+  font-weight: 600;
+}
+
 /* Text Input */
 .text-section {
   margin-bottom: 24px;

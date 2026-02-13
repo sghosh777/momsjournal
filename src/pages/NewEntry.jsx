@@ -35,6 +35,7 @@ export default function NewEntry() {
   const [text, setText] = useState('')
   const [photo, setPhoto] = useState(null)
   const [mood, setMood] = useState(null)
+  const [visibility, setVisibility] = useState('private')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [saveError, setSaveError] = useState(null)
@@ -81,7 +82,7 @@ export default function NewEntry() {
 
     setSaving(true)
     try {
-      await saveEntry(user.uid, { text: text.trim(), photo, mood })
+      await saveEntry(user.uid, { text: text.trim(), photo, mood, visibility })
       setSaved(true)
       setTimeout(() => navigate('/'), 600)
     } catch (err) {
@@ -96,8 +97,10 @@ export default function NewEntry() {
   if (saved) {
     return (
       <div className="new-entry-saved">
-        <div className="saved-icon">🌸</div>
-        <p className="saved-text">Moment saved!</p>
+        <div className="saved-icon">{visibility === 'shared' ? '💌' : '🌸'}</div>
+        <p className="saved-text">
+          {visibility === 'shared' ? 'Shared with your circle!' : 'Moment saved!'}
+        </p>
       </div>
     )
   }
@@ -154,6 +157,32 @@ export default function NewEntry() {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Visibility Toggle */}
+      <div className="visibility-section">
+        <p className="visibility-label">Who can see this?</p>
+        <div className="visibility-toggle">
+          <button
+            className={`vis-btn ${visibility === 'private' ? 'vis-active vis-private' : ''}`}
+            onClick={() => setVisibility('private')}
+          >
+            <span>🔒</span>
+            <span>Just me</span>
+          </button>
+          <button
+            className={`vis-btn ${visibility === 'shared' ? 'vis-active vis-shared' : ''}`}
+            onClick={() => setVisibility('shared')}
+          >
+            <span>💌</span>
+            <span>My Circle</span>
+          </button>
+        </div>
+        {visibility === 'shared' && (
+          <p className="visibility-hint">
+            Your close friends will receive this moment via text
+          </p>
+        )}
       </div>
 
       {/* Text Input */}

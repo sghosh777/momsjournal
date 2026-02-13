@@ -27,7 +27,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  gap: 32px;
+  gap: 16px;
   padding: 8px 24px calc(12px + var(--safe-bottom));
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(20px);
