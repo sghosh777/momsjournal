@@ -2,7 +2,7 @@
   "name": "momsjournal-functions",
   "description": "Cloud Functions for Mom's Journal - sends SMS/MMS via Twilio when entries are shared",
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "main": "index.js",
   "dependencies": {
