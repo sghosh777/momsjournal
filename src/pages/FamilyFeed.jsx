@@ -154,7 +154,11 @@ export default function FamilyFeed() {
                 const moodInfo = entry.mood ? MOOD_LABELS[entry.mood] : null
                 return (
                   <article key={entry.id} className="ff-card">
-                    {entry.photo && (
+                    {entry.video ? (
+                      <div className="ff-card-photo">
+                        <video src={entry.video} controls playsInline style={{ width: '100%' }} />
+                      </div>
+                    ) : entry.photo ? (
                       <div
                         className="ff-card-photo"
                         onClick={() => setExpandedPhoto(expandedPhoto === entry.id ? null : entry.id)}
@@ -165,7 +169,7 @@ export default function FamilyFeed() {
                           className={expandedPhoto === entry.id ? 'ff-photo-expanded' : ''}
                         />
                       </div>
-                    )}
+                    ) : null}
                     <div className="ff-card-body">
                       <div className="ff-card-meta">
                         <span className="ff-card-time">{format(date, 'h:mm a')}</span>

@@ -197,11 +197,16 @@ export default function JournalFeed() {
                   className="entry-card"
                   style={{ animationDelay: `${idx * 0.05}s` }}
                 >
-                  {entry.photo && (
+                  {entry.video ? (
+                    <div className="entry-card-photo">
+                      <video src={entry.video} muted preload="metadata" />
+                      <span className="entry-card-video-badge">▶</span>
+                    </div>
+                  ) : entry.photo ? (
                     <div className="entry-card-photo">
                       <img src={entry.photo} alt="Journal moment" loading="lazy" />
                     </div>
-                  )}
+                  ) : null}
                   <div className="entry-card-body">
                     <div className="entry-card-meta">
                       <span className="entry-card-time">
@@ -212,6 +217,9 @@ export default function JournalFeed() {
                           {MOOD_LABELS[entry.mood]?.emoji}
                         </span>
                       )}
+                      <span className={`entry-card-vis ${entry.visibility === 'shared' ? 'entry-card-vis-shared' : ''}`}>
+                        {entry.visibility === 'shared' ? '💌' : '🔒'}
+                      </span>
                     </div>
                     <p className="entry-card-text">{entry.text}</p>
                   </div>

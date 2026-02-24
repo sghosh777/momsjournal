@@ -32,8 +32,11 @@ export default function NewEntry() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const fileInputRef = useRef(null)
+  const videoInputRef = useRef(null)
   const [text, setText] = useState('')
   const [photo, setPhoto] = useState(null)
+  const [video, setVideo] = useState(null)
+  const [videoPreview, setVideoPreview] = useState(null)
   const [mood, setMood] = useState(null)
   const [visibility, setVisibility] = useState('private')
   const [saving, setSaving] = useState(false)
@@ -72,9 +75,26 @@ export default function NewEntry() {
     reader.readAsDataURL(file)
   }
 
-  function handleRemovePhoto() {
+  function handleVideoSelect(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 100 * 1024 * 1024) {
+      setSaveError('Video must be under 100MB')
+      return
+    }
+    setVideo(file)
+    setVideoPreview(URL.createObjectURL(file))
     setPhoto(null)
     if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  function handleRemoveMedia() {
+    setPhoto(null)
+    setVideo(null)
+    if (videoPreview) URL.revokeObjectURL(videoPreview)
+    setVideoPreview(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+    if (videoInputRef.current) videoInputRef.current.value = ''
   }
 
   async function handleSave() {
@@ -82,7 +102,7 @@ export default function NewEntry() {
 
     setSaving(true)
     try {
-      await saveEntry(user.uid, { text: text.trim(), photo, mood, visibility })
+      await saveEntry(user.uid, { text: text.trim(), photo, video, mood, visibility })
       setSaved(true)
       setTimeout(() => navigate('/'), 600)
     } catch (err) {
@@ -92,7 +112,7 @@ export default function NewEntry() {
     }
   }
 
-  const canSave = text.trim().length > 0 || photo
+  const canSave = text.trim().length > 0 || photo || video
 
   if (saved) {
     return (
@@ -115,29 +135,52 @@ export default function NewEntry() {
         <div style={{ width: 60 }} />
       </header>
 
-      {/* Photo Upload */}
+      {/* Media Upload */}
       <div className="new-entry-photo-section">
         {photo ? (
           <div className="photo-preview">
             <img src={photo} alt="Selected" />
-            <button className="photo-remove" onClick={handleRemovePhoto}>
+            <button className="photo-remove" onClick={handleRemoveMedia}>
+              ✕
+            </button>
+          </div>
+        ) : videoPreview ? (
+          <div className="photo-preview">
+            <video src={videoPreview} controls playsInline className="video-preview" />
+            <button className="photo-remove" onClick={handleRemoveMedia}>
               ✕
             </button>
           </div>
         ) : (
-          <button
-            className="photo-upload-btn"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <span className="photo-upload-icon">📷</span>
-            <span className="photo-upload-text">Add a photo</span>
-          </button>
+          <div className="media-upload-row">
+            <button
+              className="photo-upload-btn"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <span className="photo-upload-icon">📷</span>
+              <span className="photo-upload-text">Add a photo</span>
+            </button>
+            <button
+              className="photo-upload-btn"
+              onClick={() => videoInputRef.current?.click()}
+            >
+              <span className="photo-upload-icon">🎬</span>
+              <span className="photo-upload-text">Add a video</span>
+            </button>
+          </div>
         )}
         <input
           ref={fileInputRef}
           type="file"
           accept="image/*"
           onChange={handlePhotoSelect}
+          className="photo-input-hidden"
+        />
+        <input
+          ref={videoInputRef}
+          type="file"
+          accept="video/*"
+          onChange={handleVideoSelect}
           className="photo-input-hidden"
         />
       </div>

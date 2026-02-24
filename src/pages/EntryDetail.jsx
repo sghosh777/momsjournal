@@ -82,11 +82,15 @@ export default function EntryDetail() {
         </button>
       </header>
 
-      {entry.photo && (
+      {entry.video ? (
+        <div className="detail-photo">
+          <video src={entry.video} controls playsInline style={{ width: '100%', maxHeight: 360 }} />
+        </div>
+      ) : entry.photo ? (
         <div className="detail-photo">
           <img src={entry.photo} alt="Journal moment" />
         </div>
-      )}
+      ) : null}
 
       <div className="detail-content">
         <div className="detail-date-row">

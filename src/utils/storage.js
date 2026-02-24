@@ -14,6 +14,7 @@ import {
 import {
   ref,
   uploadString,
+  uploadBytes,
   getDownloadURL,
   deleteObject,
 } from 'firebase/storage'
@@ -26,6 +27,14 @@ async function uploadPhoto(userId, photoDataUrl) {
   const photoRef = ref(storage, `photos/${userId}/${photoId}.jpg`)
   await uploadString(photoRef, photoDataUrl, 'data_url')
   return getDownloadURL(photoRef)
+}
+
+async function uploadVideo(userId, videoFile) {
+  const videoId = crypto.randomUUID()
+  const ext = videoFile.name?.split('.').pop() || 'mp4'
+  const videoRef = ref(storage, `videos/${userId}/${videoId}.${ext}`)
+  await uploadBytes(videoRef, videoFile)
+  return getDownloadURL(videoRef)
 }
 
 async function deletePhoto(photoUrl) {
@@ -55,6 +64,8 @@ export async function getEntries(userId) {
 
 export async function saveEntry(userId, entry) {
   let photoUrl = null
+  let videoUrl = null
+
   if (entry.photo) {
     try {
       photoUrl = await uploadPhoto(userId, entry.photo)
@@ -63,10 +74,19 @@ export async function saveEntry(userId, entry) {
     }
   }
 
+  if (entry.video) {
+    try {
+      videoUrl = await uploadVideo(userId, entry.video)
+    } catch (err) {
+      console.error('Video upload failed, saving without video:', err)
+    }
+  }
+
   const docRef = await addDoc(collection(db, ENTRIES_COL), {
     userId,
     text: entry.text || '',
     photo: photoUrl,
+    video: videoUrl,
     mood: entry.mood || null,
     visibility: entry.visibility || 'private',
     createdAt: serverTimestamp(),
@@ -77,6 +97,7 @@ export async function saveEntry(userId, entry) {
     userId,
     text: entry.text || '',
     photo: photoUrl,
+    video: videoUrl,
     mood: entry.mood || null,
     visibility: entry.visibility || 'private',
     createdAt: new Date().toISOString(),
@@ -88,9 +109,8 @@ export async function deleteEntry(entryId) {
   const snapshot = await getDoc(docRef)
   if (snapshot.exists()) {
     const data = snapshot.data()
-    if (data.photo) {
-      await deletePhoto(data.photo)
-    }
+    if (data.photo) await deletePhoto(data.photo)
+    if (data.video) await deletePhoto(data.video)
   }
   await deleteDoc(docRef)
 }

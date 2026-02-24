@@ -84,11 +84,15 @@ export default function SharedView() {
         <span className="shared-header-text">A shared moment</span>
       </header>
 
-      {entry.photo && (
+      {entry.video ? (
+        <div className="shared-photo">
+          <video src={entry.video} controls playsInline style={{ width: '100%', borderRadius: 'var(--radius-md)' }} />
+        </div>
+      ) : entry.photo ? (
         <div className="shared-photo">
           <img src={entry.photo} alt="A shared moment" />
         </div>
-      )}
+      ) : null}
 
       <div className="shared-content">
         <div className="shared-date-row">
