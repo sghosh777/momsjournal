@@ -63,6 +63,10 @@ exports.onSharedEntry = onDocumentCreated(
       silly: "🤪",
     };
 
+    // Shareable link to view the entry
+    const entryId = event.params.entryId;
+    const shareLink = `https://sghosh777.github.io/momsjournal/#/shared/${entryId}`;
+
     let body = `💌 ${senderName} shared a moment with you!\n\n`;
     if (entry.mood && moodEmojis[entry.mood]) {
       body += `Feeling ${moodEmojis[entry.mood]} ${entry.mood}\n\n`;
@@ -70,7 +74,8 @@ exports.onSharedEntry = onDocumentCreated(
     if (entry.text) {
       body += `"${entry.text}"\n\n`;
     }
-    body += "— from Mom's Journal 🌸";
+    body += `View it here: ${shareLink}\n\n`;
+    body += "— Mom's Journal 🌸";
 
     // Send via Twilio
     const twilio = require("twilio")(

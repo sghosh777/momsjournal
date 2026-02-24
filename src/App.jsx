@@ -1,14 +1,25 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './utils/AuthContext'
 import Layout from './components/Layout'
 import JournalFeed from './pages/JournalFeed'
 import NewEntry from './pages/NewEntry'
 import EntryDetail from './pages/EntryDetail'
 import MyCircle from './pages/MyCircle'
+import SharedView from './pages/SharedView'
 import Welcome from './pages/Welcome'
 
 function AppRoutes() {
   const { user, loading, error } = useAuth()
+  const location = useLocation()
+
+  // Shared view is public — no login required
+  if (location.pathname.startsWith('/shared/')) {
+    return (
+      <Routes>
+        <Route path="/shared/:id" element={<SharedView />} />
+      </Routes>
+    )
+  }
 
   if (loading) {
     return (
