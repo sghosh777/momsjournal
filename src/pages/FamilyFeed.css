@@ -42,6 +42,12 @@
 .ff-error-icon { font-size: 48px; margin-bottom: 16px; }
 .ff-error h2 { font-size: 20px; color: var(--color-text); margin-bottom: 8px; }
 .ff-error p { font-size: 14px; color: var(--color-text-light); max-width: 260px; line-height: 1.5; }
+.ff-error-brand {
+  font-family: var(--font-handwriting);
+  font-size: 18px;
+  color: var(--color-primary);
+  margin-top: 32px;
+}
 
 /* Install Banner */
 .ff-install-banner {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '../utils/AuthContext'
-import { getOrCreateInvite } from '../utils/storage'
+import { getOrCreateInvite, refreshInvite } from '../utils/storage'
 import './Layout.css'
 
 const navItems = [
@@ -15,16 +15,38 @@ export default function Layout() {
   const { user, signOut } = useAuth()
   const [showMenu, setShowMenu] = useState(false)
   const [shareLink, setShareLink] = useState(null)
+  const [expiresAt, setExpiresAt] = useState(null)
   const [copied, setCopied] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
   const isDetail = location.pathname.startsWith('/entry/')
+
+  function updateFromInvite(invite) {
+    setShareLink(`https://sghosh777.github.io/momsjournal/#/family/${invite.id}`)
+    if (invite.expiresAt) {
+      const d = typeof invite.expiresAt === 'string' ? new Date(invite.expiresAt) : invite.expiresAt.toDate ? invite.expiresAt.toDate() : new Date(invite.expiresAt)
+      setExpiresAt(d)
+    }
+  }
 
   useEffect(() => {
     if (user?.uid) {
-      getOrCreateInvite(user.uid, user.displayName).then((invite) => {
-        setShareLink(`https://sghosh777.github.io/momsjournal/#/family/${invite.id}`)
-      }).catch(() => {})
+      getOrCreateInvite(user.uid, user.displayName).then(updateFromInvite).catch(() => {})
     }
   }, [user?.uid])
+
+  async function handleRefreshLink() {
+    if (!user?.uid || refreshing) return
+    setRefreshing(true)
+    try {
+      const invite = await refreshInvite(user.uid, user.displayName)
+      updateFromInvite(invite)
+      setCopied(false)
+    } catch (err) {
+      console.error('Failed to refresh invite:', err)
+    } finally {
+      setRefreshing(false)
+    }
+  }
 
   async function handleCopyLink() {
     if (!shareLink) return
@@ -100,6 +122,16 @@ export default function Layout() {
               <span className="profile-menu-share-icon">🔗</span>
               <span>{copied ? 'Link copied!' : 'Share feed with family'}</span>
             </button>
+            {expiresAt && (
+              <div className="profile-menu-expire-row">
+                <span className="profile-menu-expire-text">
+                  Expires {expiresAt.toLocaleDateString()}
+                </span>
+                <button className="profile-menu-refresh" onClick={handleRefreshLink} disabled={refreshing}>
+                  {refreshing ? 'Refreshing...' : 'New link'}
+                </button>
+              </div>
+            )}
             <button className="profile-menu-signout" onClick={signOut}>
               Sign out
             </button>

@@ -51,6 +51,13 @@ export default function FamilyFeed() {
           return
         }
 
+        if (invite.expired) {
+          setMamaName(invite.mamaName || null)
+          setError('expired')
+          setLoading(false)
+          return
+        }
+
         // Get mama's display name
         setMamaName(invite.mamaName || null)
 
@@ -79,12 +86,26 @@ export default function FamilyFeed() {
     )
   }
 
+  if (error === 'expired') {
+    return (
+      <div className="ff-error">
+        <div className="ff-error-icon">⏰</div>
+        <h2>This link has expired</h2>
+        <p>
+          {mamaName ? `Ask ${mamaName}` : 'Ask mama'} for a fresh link to see new moments.
+        </p>
+        <div className="ff-error-brand">Mom's Journal 🌸</div>
+      </div>
+    )
+  }
+
   if (error) {
     return (
       <div className="ff-error">
         <div className="ff-error-icon">🔗</div>
         <h2>Link not found</h2>
-        <p>This family feed link may be invalid or expired.</p>
+        <p>This family feed link may be invalid.</p>
+        <div className="ff-error-brand">Mom's Journal 🌸</div>
       </div>
     )
   }

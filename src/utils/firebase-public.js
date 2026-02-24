@@ -15,7 +15,19 @@ export async function getInvite(code) {
   const docRef = doc(db, 'invites', code)
   const snapshot = await getDoc(docRef)
   if (!snapshot.exists()) return null
-  return { id: snapshot.id, ...snapshot.data() }
+
+  const data = snapshot.data()
+  const invite = { id: snapshot.id, ...data }
+
+  // Check expiration
+  if (data.expiresAt) {
+    const expires = data.expiresAt.toDate ? data.expiresAt.toDate() : new Date(data.expiresAt)
+    if (expires < new Date()) {
+      return { ...invite, expired: true }
+    }
+  }
+
+  return invite
 }
 
 export function subscribeToSharedEntries(userId, callback) {

@@ -138,6 +138,7 @@ export async function removeFriend(friendId) {
 // --- Invites ---
 
 const INVITES_COL = 'invites'
+const INVITE_DURATION_DAYS = 7
 
 function generateCode() {
   const chars = 'abcdefghijkmnpqrstuvwxyz23456789'
@@ -148,23 +149,63 @@ function generateCode() {
   return code
 }
 
+function getExpiresAt() {
+  const d = new Date()
+  d.setDate(d.getDate() + INVITE_DURATION_DAYS)
+  return d
+}
+
+function isExpired(invite) {
+  if (!invite.expiresAt) return false
+  const expires = invite.expiresAt.toDate ? invite.expiresAt.toDate() : new Date(invite.expiresAt)
+  return expires < new Date()
+}
+
 export async function getOrCreateInvite(userId, displayName) {
-  // Check if user already has an invite
+  // Check if user already has a valid invite
   const q = query(collection(db, INVITES_COL), where('userId', '==', userId))
   const snapshot = await getDocs(q)
   if (!snapshot.empty) {
     const existing = snapshot.docs[0]
-    return { id: existing.id, ...existing.data() }
+    const data = { id: existing.id, ...existing.data() }
+    // If not expired, return it
+    if (!isExpired(data)) {
+      return data
+    }
+    // If expired, delete it and create a new one
+    await deleteDoc(doc(db, INVITES_COL, existing.id))
   }
 
   // Create a new invite with a short code as the doc ID
   const code = generateCode()
+  const expiresAt = getExpiresAt()
   await setDoc(doc(db, INVITES_COL, code), {
     userId,
     mamaName: displayName || null,
+    expiresAt,
     createdAt: serverTimestamp(),
   })
-  return { id: code, userId }
+  return { id: code, userId, expiresAt: expiresAt.toISOString() }
+}
+
+export async function refreshInvite(userId, displayName) {
+  // Delete all existing invites for this user
+  const q = query(collection(db, INVITES_COL), where('userId', '==', userId))
+  const snapshot = await getDocs(q)
+  for (const d of snapshot.docs) {
+    await deleteDoc(doc(db, INVITES_COL, d.id))
+  }
+
+  // Create a fresh one
+  const code = generateCode()
+  const expiresAt = getExpiresAt()
+  await setDoc(doc(db, INVITES_COL, code), {
+    userId,
+    mamaName: displayName || null,
+    expiresAt,
+    createdAt: serverTimestamp(),
+  })
+  return { id: code, userId, expiresAt: expiresAt.toISOString() }
 }
 
 export async function getInvite(code) {
