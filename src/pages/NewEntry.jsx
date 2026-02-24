@@ -37,6 +37,7 @@ export default function NewEntry() {
   const [photo, setPhoto] = useState(null)
   const [video, setVideo] = useState(null)
   const [videoPreview, setVideoPreview] = useState(null)
+  const [videoThumb, setVideoThumb] = useState(null)
   const [mood, setMood] = useState(null)
   const [visibility, setVisibility] = useState('private')
   const [customDate, setCustomDate] = useState('')
@@ -83,15 +84,40 @@ export default function NewEntry() {
       setSaveError('Video must be under 100MB')
       return
     }
+    const objectUrl = URL.createObjectURL(file)
     setVideo(file)
-    setVideoPreview(URL.createObjectURL(file))
+    setVideoPreview(objectUrl)
     setPhoto(null)
     if (fileInputRef.current) fileInputRef.current.value = ''
+
+    // Generate thumbnail from first frame
+    const vid = document.createElement('video')
+    vid.preload = 'metadata'
+    vid.muted = true
+    vid.playsInline = true
+    vid.src = objectUrl
+    vid.onloadeddata = () => {
+      vid.currentTime = 0.5
+    }
+    vid.onseeked = () => {
+      const canvas = document.createElement('canvas')
+      const maxSize = 400
+      let { videoWidth: w, videoHeight: h } = vid
+      if (w > maxSize || h > maxSize) {
+        if (w > h) { h = (h / w) * maxSize; w = maxSize }
+        else { w = (w / h) * maxSize; h = maxSize }
+      }
+      canvas.width = w
+      canvas.height = h
+      canvas.getContext('2d').drawImage(vid, 0, 0, w, h)
+      setVideoThumb(canvas.toDataURL('image/jpeg', 0.7))
+    }
   }
 
   function handleRemoveMedia() {
     setPhoto(null)
     setVideo(null)
+    setVideoThumb(null)
     if (videoPreview) URL.revokeObjectURL(videoPreview)
     setVideoPreview(null)
     if (fileInputRef.current) fileInputRef.current.value = ''
@@ -103,7 +129,7 @@ export default function NewEntry() {
 
     setSaving(true)
     try {
-      await saveEntry(user.uid, { text: text.trim(), photo, video, mood, visibility, customDate: customDate || null })
+      await saveEntry(user.uid, { text: text.trim(), photo, video, videoThumb, mood, visibility, customDate: customDate || null })
       setSaved(true)
       setTimeout(() => navigate('/'), 600)
     } catch (err) {

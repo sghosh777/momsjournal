@@ -211,7 +211,7 @@ export default function FamilyFeed() {
                   <article key={entry.id} className="ff-card">
                     {entry.video ? (
                       <div className="ff-card-photo">
-                        <video src={entry.video} controls playsInline style={{ width: '100%' }} />
+                        <video src={entry.video} controls playsInline poster={entry.videoThumb || undefined} style={{ width: '100%' }} />
                       </div>
                     ) : entry.photo ? (
                       <div

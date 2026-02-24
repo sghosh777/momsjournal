@@ -65,6 +65,7 @@ export async function getEntries(userId) {
 export async function saveEntry(userId, entry) {
   let photoUrl = null
   let videoUrl = null
+  let videoThumbUrl = null
 
   if (entry.photo) {
     try {
@@ -82,11 +83,20 @@ export async function saveEntry(userId, entry) {
     }
   }
 
+  if (entry.videoThumb) {
+    try {
+      videoThumbUrl = await uploadPhoto(userId, entry.videoThumb)
+    } catch (err) {
+      console.error('Thumbnail upload failed:', err)
+    }
+  }
+
   const docRef = await addDoc(collection(db, ENTRIES_COL), {
     userId,
     text: entry.text || '',
     photo: photoUrl,
     video: videoUrl,
+    videoThumb: videoThumbUrl,
     mood: entry.mood || null,
     visibility: entry.visibility || 'private',
     createdAt: entry.customDate ? new Date(entry.customDate) : serverTimestamp(),
@@ -98,6 +108,7 @@ export async function saveEntry(userId, entry) {
     text: entry.text || '',
     photo: photoUrl,
     video: videoUrl,
+    videoThumb: videoThumbUrl,
     mood: entry.mood || null,
     visibility: entry.visibility || 'private',
     createdAt: new Date().toISOString(),

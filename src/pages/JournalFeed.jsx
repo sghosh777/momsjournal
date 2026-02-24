@@ -199,7 +199,7 @@ export default function JournalFeed() {
                 >
                   {entry.video ? (
                     <div className="entry-card-photo">
-                      <video src={entry.video} muted preload="metadata" />
+                      <video src={entry.video} muted preload="metadata" poster={entry.videoThumb || undefined} />
                       <span className="entry-card-video-badge">▶</span>
                     </div>
                   ) : entry.photo ? (

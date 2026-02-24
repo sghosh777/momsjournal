@@ -84,7 +84,7 @@ export default function EntryDetail() {
 
       {entry.video ? (
         <div className="detail-photo">
-          <video src={entry.video} controls playsInline style={{ width: '100%', maxHeight: 360 }} />
+          <video src={entry.video} controls playsInline poster={entry.videoThumb || undefined} style={{ width: '100%', maxHeight: 360 }} />
         </div>
       ) : entry.photo ? (
         <div className="detail-photo">

@@ -86,7 +86,7 @@ export default function SharedView() {
 
       {entry.video ? (
         <div className="shared-photo">
-          <video src={entry.video} controls playsInline style={{ width: '100%', borderRadius: 'var(--radius-md)' }} />
+          <video src={entry.video} controls playsInline poster={entry.videoThumb || undefined} style={{ width: '100%', borderRadius: 'var(--radius-md)' }} />
         </div>
       ) : entry.photo ? (
         <div className="shared-photo">
