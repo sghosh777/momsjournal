@@ -89,7 +89,7 @@ export async function saveEntry(userId, entry) {
     video: videoUrl,
     mood: entry.mood || null,
     visibility: entry.visibility || 'private',
-    createdAt: serverTimestamp(),
+    createdAt: entry.customDate ? new Date(entry.customDate) : serverTimestamp(),
   })
 
   return {

@@ -39,6 +39,7 @@ export default function NewEntry() {
   const [videoPreview, setVideoPreview] = useState(null)
   const [mood, setMood] = useState(null)
   const [visibility, setVisibility] = useState('private')
+  const [customDate, setCustomDate] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [saveError, setSaveError] = useState(null)
@@ -98,11 +99,11 @@ export default function NewEntry() {
   }
 
   async function handleSave() {
-    if (!text.trim() && !photo) return
+    if (!text.trim() && !photo && !video) return
 
     setSaving(true)
     try {
-      await saveEntry(user.uid, { text: text.trim(), photo, video, mood, visibility })
+      await saveEntry(user.uid, { text: text.trim(), photo, video, mood, visibility, customDate: customDate || null })
       setSaved(true)
       setTimeout(() => navigate('/'), 600)
     } catch (err) {
@@ -224,6 +225,34 @@ export default function NewEntry() {
         {visibility === 'shared' && (
           <p className="visibility-hint">
             Your close friends will receive this moment via text
+          </p>
+        )}
+      </div>
+
+      {/* Date Picker */}
+      <div className="date-section">
+        <p className="date-label">When was this moment?</p>
+        <div className="date-picker-row">
+          <button
+            className={`date-btn ${!customDate ? 'date-active' : ''}`}
+            onClick={() => setCustomDate('')}
+          >
+            Today
+          </button>
+          <div className="date-input-wrap">
+            <input
+              type="date"
+              className={`date-input ${customDate ? 'date-input-active' : ''}`}
+              value={customDate}
+              onChange={(e) => setCustomDate(e.target.value)}
+              max={new Date().toISOString().split('T')[0]}
+            />
+            {!customDate && <span className="date-input-placeholder">Pick a date...</span>}
+          </div>
+        </div>
+        {customDate && (
+          <p className="date-hint">
+            Throwback to {new Date(customDate + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
           </p>
         )}
       </div>
