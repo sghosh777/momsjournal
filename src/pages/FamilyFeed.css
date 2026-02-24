@@ -1,8 +1,10 @@
 .ff {
-  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
   max-width: 480px;
   margin: 0 auto;
   background: var(--color-bg);
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Loading */

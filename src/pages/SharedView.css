@@ -1,9 +1,11 @@
 .shared {
-  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
   max-width: 480px;
   margin: 0 auto;
   background: var(--color-bg);
   animation: fadeIn 0.4s ease-out;
+  -webkit-overflow-scrolling: touch;
 }
 
 .shared-loading {
