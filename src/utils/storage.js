@@ -5,8 +5,10 @@ import {
   doc,
   getDocs,
   getDoc,
+  setDoc,
   query,
   where,
+  onSnapshot,
   serverTimestamp,
 } from 'firebase/firestore'
 import {
@@ -131,6 +133,64 @@ export async function addFriend(userId, friend) {
 
 export async function removeFriend(friendId) {
   await deleteDoc(doc(db, FRIENDS_COL, friendId))
+}
+
+// --- Invites ---
+
+const INVITES_COL = 'invites'
+
+function generateCode() {
+  const chars = 'abcdefghijkmnpqrstuvwxyz23456789'
+  let code = ''
+  for (let i = 0; i < 8; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)]
+  }
+  return code
+}
+
+export async function getOrCreateInvite(userId, displayName) {
+  // Check if user already has an invite
+  const q = query(collection(db, INVITES_COL), where('userId', '==', userId))
+  const snapshot = await getDocs(q)
+  if (!snapshot.empty) {
+    const existing = snapshot.docs[0]
+    return { id: existing.id, ...existing.data() }
+  }
+
+  // Create a new invite with a short code as the doc ID
+  const code = generateCode()
+  await setDoc(doc(db, INVITES_COL, code), {
+    userId,
+    mamaName: displayName || null,
+    createdAt: serverTimestamp(),
+  })
+  return { id: code, userId }
+}
+
+export async function getInvite(code) {
+  const docRef = doc(db, INVITES_COL, code)
+  const snapshot = await getDoc(docRef)
+  if (!snapshot.exists()) return null
+  return { id: snapshot.id, ...snapshot.data() }
+}
+
+// --- Family Feed (real-time) ---
+
+export function subscribeToSharedEntries(userId, callback) {
+  const q = query(
+    collection(db, ENTRIES_COL),
+    where('userId', '==', userId),
+    where('visibility', '==', 'shared')
+  )
+  return onSnapshot(q, (snapshot) => {
+    const entries = snapshot.docs.map((d) => ({
+      id: d.id,
+      ...d.data(),
+      createdAt: d.data().createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+    }))
+    entries.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    callback(entries)
+  })
 }
 
 // --- Entries ---
