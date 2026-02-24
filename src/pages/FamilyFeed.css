@@ -100,6 +100,42 @@
   color: var(--color-text-lighter);
 }
 
+/* Notification button */
+.ff-notify-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 12px rgba(232, 115, 154, 0.3);
+  transition: all 0.2s ease;
+}
+
+.ff-notify-btn:active {
+  transform: scale(0.96);
+}
+
+.ff-notify-status {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-light);
+}
+
+.ff-notify-success {
+  color: var(--color-secondary);
+}
+
+.ff-notify-denied {
+  color: var(--color-text-lighter);
+  font-size: 12px;
+}
+
 /* Empty state */
 .ff-empty {
   text-align: center;

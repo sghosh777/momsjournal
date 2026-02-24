@@ -29,5 +29,13 @@ service cloud.firestore {
       allow write: if request.auth != null
         && request.auth.uid == resource.data.userId;
     }
+
+    // Push notification subscribers: anyone can write (public family feed viewers),
+    // only Cloud Functions (admin SDK) read/delete
+    match /pushSubscribers/{tokenId} {
+      allow write: if request.resource.data.keys().hasAll(['userId', 'token', 'createdAt'])
+        && request.resource.data.userId is string
+        && request.resource.data.token is string;
+    }
   }
 }

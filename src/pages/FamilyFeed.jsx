@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { getInvite, subscribeToSharedEntries } from '../utils/firebase-public'
+import { getInvite, subscribeToSharedEntries, subscribeToNotifications } from '../utils/firebase-public'
 import { format, parseISO, isToday, isYesterday } from 'date-fns'
 import './FamilyFeed.css'
 
@@ -36,8 +36,25 @@ export default function FamilyFeed() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [mamaName, setMamaName] = useState(null)
+  const [mamaUserId, setMamaUserId] = useState(null)
   const [showInstall, setShowInstall] = useState(true)
   const [expandedPhoto, setExpandedPhoto] = useState(null)
+  const [notifState, setNotifState] = useState('idle') // idle | subscribing | subscribed | denied | unsupported
+
+  // Check if notifications are already granted
+  useEffect(() => {
+    if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+      setNotifState('unsupported')
+    } else if (Notification.permission === 'granted') {
+      // Check localStorage to see if they already subscribed for this feed
+      const key = `notif-subscribed-${code}`
+      if (localStorage.getItem(key)) {
+        setNotifState('subscribed')
+      }
+    } else if (Notification.permission === 'denied') {
+      setNotifState('denied')
+    }
+  }, [code])
 
   useEffect(() => {
     let unsubscribe = null
@@ -58,8 +75,9 @@ export default function FamilyFeed() {
           return
         }
 
-        // Get mama's display name
+        // Get mama's display name and userId
         setMamaName(invite.mamaName || null)
+        setMamaUserId(invite.userId)
 
         // Subscribe to real-time shared entries
         unsubscribe = subscribeToSharedEntries(invite.userId, (data) => {
@@ -76,6 +94,23 @@ export default function FamilyFeed() {
     init()
     return () => { if (unsubscribe) unsubscribe() }
   }, [code])
+
+  async function handleNotifyMe() {
+    if (!mamaUserId) return
+    setNotifState('subscribing')
+    try {
+      const granted = await subscribeToNotifications(mamaUserId)
+      if (granted) {
+        setNotifState('subscribed')
+        localStorage.setItem(`notif-subscribed-${code}`, 'true')
+      } else {
+        setNotifState('denied')
+      }
+    } catch (err) {
+      console.error('Notification subscription failed:', err)
+      setNotifState('denied')
+    }
+  }
 
   if (loading) {
     return (
@@ -133,6 +168,26 @@ export default function FamilyFeed() {
           {mamaName ? `${mamaName}'s Journal` : "Mom's Journal"}
         </h1>
         <p className="ff-header-subtitle">Shared moments from a new mama</p>
+
+        {/* Notification bell */}
+        {notifState === 'idle' && (
+          <button className="ff-notify-btn" onClick={handleNotifyMe}>
+            🔔 Notify me of new moments
+          </button>
+        )}
+        {notifState === 'subscribing' && (
+          <div className="ff-notify-status">Setting up notifications...</div>
+        )}
+        {notifState === 'subscribed' && (
+          <div className="ff-notify-status ff-notify-success">
+            🔔 Notifications on! You'll be notified of new moments.
+          </div>
+        )}
+        {notifState === 'denied' && (
+          <div className="ff-notify-status ff-notify-denied">
+            Notifications blocked. Check your browser settings to enable.
+          </div>
+        )}
       </header>
 
       {/* Feed */}

@@ -5,9 +5,11 @@ import {
   collection,
   doc,
   getDoc,
+  setDoc,
   query,
   where,
   onSnapshot,
+  serverTimestamp,
 } from 'firebase/firestore'
 import { db } from './firebase'
 
@@ -45,4 +47,42 @@ export function subscribeToSharedEntries(userId, callback) {
     entries.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     callback(entries)
   })
+}
+
+/**
+ * Subscribe to push notifications for new shared moments.
+ * Uses the FCM token as the document ID for idempotent upserts (no read needed).
+ * Returns true if successful, false if permission denied.
+ */
+export async function subscribeToNotifications(userId) {
+  // Check browser support
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+    throw new Error('Push notifications are not supported in this browser')
+  }
+
+  const permission = await Notification.requestPermission()
+  if (permission !== 'granted') return false
+
+  // Dynamically import messaging to avoid loading it on every page
+  const { getMessaging, getToken } = await import('firebase/messaging')
+  const { getApp } = await import('firebase/app')
+
+  const messaging = getMessaging(getApp())
+  const swReg = await navigator.serviceWorker.ready
+
+  const token = await getToken(messaging, {
+    vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+    serviceWorkerRegistration: swReg,
+  })
+
+  if (!token) throw new Error('Could not get notification token')
+
+  // Use token as doc ID — idempotent, no duplicate check needed
+  await setDoc(doc(db, 'pushSubscribers', token), {
+    userId,
+    token,
+    createdAt: serverTimestamp(),
+  })
+
+  return true
 }

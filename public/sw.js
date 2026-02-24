@@ -28,6 +28,44 @@ self.addEventListener('activate', (event) => {
   self.clients.claim()
 })
 
+// Push notifications
+self.addEventListener('push', (event) => {
+  let data = { title: "Mom's Journal 🌸", body: 'A new moment was shared!' }
+  try {
+    if (event.data) {
+      const payload = event.data.json()
+      data = payload.notification || payload.data || data
+    }
+  } catch (e) {
+    // fallback to default
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: '/momsjournal/icons/icon-192.svg',
+      badge: '/momsjournal/icons/icon-192.svg',
+      data: data,
+    })
+  )
+})
+
+// Notification click — open the family feed or shared link
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+  const url = event.notification.data?.link || '/momsjournal/'
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      for (const client of windowClients) {
+        if (client.url.includes('/momsjournal/') && 'focus' in client) {
+          return client.focus()
+        }
+      }
+      return clients.openWindow(url)
+    })
+  )
+})
+
 // Fetch: network-first for API/data, cache-first for static assets
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url)
