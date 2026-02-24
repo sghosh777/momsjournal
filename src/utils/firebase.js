@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app'
 import { getAuth, GoogleAuthProvider } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
+import { getAnalytics, isSupported } from 'firebase/analytics'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -10,6 +11,7 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 }
 
 export const isFirebaseConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId)
@@ -18,6 +20,7 @@ let auth = null
 let googleProvider = null
 let db = null
 let storage = null
+let analytics = null
 
 if (isFirebaseConfigured) {
   const app = initializeApp(firebaseConfig)
@@ -25,6 +28,9 @@ if (isFirebaseConfigured) {
   googleProvider = new GoogleAuthProvider()
   db = getFirestore(app)
   storage = getStorage(app)
+  isSupported().then((supported) => {
+    if (supported) analytics = getAnalytics(app)
+  })
 }
 
-export { auth, googleProvider, db, storage }
+export { auth, googleProvider, db, storage, analytics }
