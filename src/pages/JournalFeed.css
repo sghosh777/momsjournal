@@ -47,45 +47,6 @@
   margin-top: 2px;
 }
 
-/* Tabs */
-.feed-tabs {
-  display: flex;
-  gap: 4px;
-  margin-top: 12px;
-  background: var(--color-border);
-  border-radius: var(--radius-full);
-  padding: 3px;
-}
-
-.feed-tab {
-  flex: 1;
-  padding: 8px 16px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--color-text-light);
-  border-radius: var(--radius-full);
-  transition: all 0.2s ease;
-  text-align: center;
-}
-
-.feed-tab-active {
-  background: white;
-  color: var(--color-primary-dark);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-}
-
-/* Mama name on following entries */
-.entry-card-mama {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--color-primary-dark);
-  background: var(--color-primary-light);
-  padding: 2px 10px;
-  border-radius: var(--radius-full);
-  margin-bottom: 6px;
-}
-
 .feed-header-flower {
   font-size: 36px;
   animation: float 3s ease-in-out infinite;

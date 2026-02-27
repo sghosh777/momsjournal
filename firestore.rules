@@ -2,11 +2,12 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Entries: owner can read/write, anyone can read shared entries
+    // Entries: owner can read/write, authenticated users can read shared entries
     match /entries/{entryId} {
       allow read: if request.auth != null
         && request.auth.uid == resource.data.userId;
-      allow read: if resource.data.visibility == 'shared';
+      allow read: if request.auth != null
+        && resource.data.visibility == 'shared';
       allow write: if request.auth != null
         && request.auth.uid == resource.data.userId;
       allow create: if request.auth != null
@@ -21,7 +22,7 @@ service cloud.firestore {
         && request.auth.uid == request.resource.data.userId;
     }
 
-    // Invites: owner can create/read, anyone can read by ID
+    // Invites: anyone can read (needed for invite link flow), owner can create/write
     match /invites/{code} {
       allow read: if true;
       allow create: if request.auth != null
@@ -30,23 +31,13 @@ service cloud.firestore {
         && request.auth.uid == resource.data.userId;
     }
 
-    // Push notification subscribers: anyone can write (public family feed viewers),
+    // Push notification subscribers: authenticated users can subscribe,
     // only Cloud Functions (admin SDK) read/delete
     match /pushSubscribers/{tokenId} {
-      allow write: if request.resource.data.keys().hasAll(['userId', 'token', 'createdAt'])
+      allow write: if request.auth != null
+        && request.resource.data.keys().hasAll(['userId', 'token', 'createdAt'])
         && request.resource.data.userId is string
         && request.resource.data.token is string;
-    }
-
-    // Following: authenticated users can follow/unfollow and read their own follows
-    match /following/{docId} {
-      allow read: if request.auth != null
-        && request.auth.uid == resource.data.followerId;
-      allow create, update: if request.auth != null
-        && request.auth.uid == request.resource.data.followerId
-        && request.resource.data.keys().hasAll(['followerId', 'followingUserId', 'mamaName', 'createdAt']);
-      allow delete: if request.auth != null
-        && request.auth.uid == resource.data.followerId;
     }
   }
 }

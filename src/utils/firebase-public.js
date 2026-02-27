@@ -32,7 +32,7 @@ export async function getInvite(code) {
   return invite
 }
 
-export function subscribeToSharedEntries(userId, callback) {
+export function subscribeToSharedEntries(userId, callback, onError) {
   const q = query(
     collection(db, 'entries'),
     where('userId', '==', userId),
@@ -46,7 +46,7 @@ export function subscribeToSharedEntries(userId, callback) {
     }))
     entries.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     callback(entries)
-  })
+  }, onError)
 }
 
 /**

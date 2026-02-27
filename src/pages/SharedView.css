@@ -58,6 +58,31 @@
   line-height: 1.5;
 }
 
+/* Sign-in button for shared view */
+.shared-signin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 16px rgba(232, 115, 154, 0.3);
+  transition: all 0.2s ease;
+}
+
+.shared-signin-btn:active {
+  transform: scale(0.96);
+}
+
+.shared-signin-btn:disabled {
+  opacity: 0.7;
+}
+
 /* Header */
 .shared-header {
   display: flex;

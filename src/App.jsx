@@ -13,22 +13,8 @@ function AppRoutes() {
   const { user, loading, error } = useAuth()
   const location = useLocation()
 
-  // Public routes — no login required
-  if (location.pathname.startsWith('/shared/')) {
-    return (
-      <Routes>
-        <Route path="/shared/:id" element={<SharedView />} />
-      </Routes>
-    )
-  }
-
-  if (location.pathname.startsWith('/family/')) {
-    return (
-      <Routes>
-        <Route path="/family/:code" element={<FamilyFeed />} />
-      </Routes>
-    )
-  }
+  const isFamilyRoute = location.pathname.startsWith('/family/')
+  const isSharedRoute = location.pathname.startsWith('/shared/')
 
   if (loading) {
     return (
@@ -44,7 +30,7 @@ function AppRoutes() {
     )
   }
 
-  if (error) {
+  if (error && !isFamilyRoute && !isSharedRoute) {
     return (
       <div style={{
         height: '100vh',
@@ -62,6 +48,23 @@ function AppRoutes() {
           {error}
         </p>
       </div>
+    )
+  }
+
+  // Family and shared routes — require sign-in (handled inside components)
+  if (isFamilyRoute) {
+    return (
+      <Routes>
+        <Route path="/family/:code" element={<FamilyFeed />} />
+      </Routes>
+    )
+  }
+
+  if (isSharedRoute) {
+    return (
+      <Routes>
+        <Route path="/shared/:id" element={<SharedView />} />
+      </Routes>
     )
   }
 

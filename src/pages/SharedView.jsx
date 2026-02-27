@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { doc, getDoc } from 'firebase/firestore'
 import { db, isFirebaseConfigured } from '../utils/firebase'
+import { useAuth } from '../utils/AuthContext'
 import { format, parseISO } from 'date-fns'
 import './SharedView.css'
 
@@ -16,11 +17,18 @@ const MOOD_LABELS = {
 
 export default function SharedView() {
   const { id } = useParams()
+  const { user, signInWithGoogle } = useAuth()
   const [entry, setEntry] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [signingIn, setSigningIn] = useState(false)
 
   useEffect(() => {
+    if (!user) {
+      setLoading(false)
+      return
+    }
+
     async function load() {
       if (!isFirebaseConfigured) {
         setError('App not configured')
@@ -46,19 +54,65 @@ export default function SharedView() {
         }
       } catch (err) {
         console.error('Failed to load shared entry:', err)
-        setError('not-found')
+        if (err.code === 'permission-denied') {
+          setError('no-access')
+        } else {
+          setError('not-found')
+        }
       } finally {
         setLoading(false)
       }
     }
+    setLoading(true)
     load()
-  }, [id])
+  }, [id, user])
+
+  async function handleSignIn() {
+    setSigningIn(true)
+    try {
+      await signInWithGoogle()
+    } catch {
+      // handled by AuthContext
+    } finally {
+      setSigningIn(false)
+    }
+  }
 
   if (loading) {
     return (
       <div className="shared-loading">
         <span className="shared-loading-icon">🌸</span>
         <p>Loading moment...</p>
+      </div>
+    )
+  }
+
+  // Not signed in — show sign-in prompt
+  if (!user) {
+    return (
+      <div className="shared-error">
+        <div className="shared-error-icon">🔒</div>
+        <h2>Sign in to view</h2>
+        <p>This moment is shared securely. Sign in to see it.</p>
+        <button
+          className="shared-signin-btn"
+          onClick={handleSignIn}
+          disabled={signingIn}
+        >
+          {signingIn ? 'Signing in...' : 'Sign in with Google'}
+        </button>
+        <div className="shared-branding">Mom's Journal 🌸</div>
+      </div>
+    )
+  }
+
+  if (error === 'no-access') {
+    return (
+      <div className="shared-error">
+        <div className="shared-error-icon">🔒</div>
+        <h2>Access needed</h2>
+        <p>Ask mama for their invite link to see their moments.</p>
+        <div className="shared-branding">Mom's Journal 🌸</div>
       </div>
     )
   }

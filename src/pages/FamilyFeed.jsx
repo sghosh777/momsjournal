@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { getInvite, subscribeToSharedEntries, subscribeToNotifications } from '../utils/firebase-public'
-import { followMama, isFollowing } from '../utils/storage'
 import { useAuth } from '../utils/AuthContext'
 import { format, parseISO, isToday, isYesterday } from 'date-fns'
 import './FamilyFeed.css'
@@ -34,7 +33,7 @@ function groupByDate(entries) {
 
 export default function FamilyFeed() {
   const { code } = useParams()
-  const { user } = useAuth()
+  const { user, signInWithGoogle } = useAuth()
   const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -43,35 +42,11 @@ export default function FamilyFeed() {
   const [showInstall, setShowInstall] = useState(true)
   const [expandedPhoto, setExpandedPhoto] = useState(null)
   const [notifState, setNotifState] = useState('idle')
-  const [followState, setFollowState] = useState('idle') // idle | following | followed
+  const [signingIn, setSigningIn] = useState(false)
 
-  // Check if notifications are already granted
+  // Step 1: Load invite info (invites are still public-readable)
   useEffect(() => {
-    if (!('Notification' in window) || !('serviceWorker' in navigator)) {
-      setNotifState('unsupported')
-    } else if (Notification.permission === 'granted') {
-      const key = `notif-subscribed-${code}`
-      if (localStorage.getItem(key)) {
-        setNotifState('subscribed')
-      }
-    } else if (Notification.permission === 'denied') {
-      setNotifState('denied')
-    }
-  }, [code])
-
-  // Check if already following
-  useEffect(() => {
-    if (user && mamaUserId && user.uid !== mamaUserId) {
-      isFollowing(user.uid, mamaUserId).then((yes) => {
-        if (yes) setFollowState('followed')
-      })
-    }
-  }, [user, mamaUserId])
-
-  useEffect(() => {
-    let unsubscribe = null
-
-    async function init() {
+    async function loadInvite() {
       try {
         const invite = await getInvite(code)
         if (!invite) {
@@ -89,20 +64,41 @@ export default function FamilyFeed() {
 
         setMamaName(invite.mamaName || null)
         setMamaUserId(invite.userId)
-
-        unsubscribe = subscribeToSharedEntries(invite.userId, (data) => {
-          setEntries(data)
-          setLoading(false)
-        })
+        setLoading(false)
       } catch (err) {
-        console.error('Failed to load family feed:', err)
+        console.error('Failed to load invite:', err)
         setError('error')
         setLoading(false)
       }
     }
+    loadInvite()
+  }, [code])
 
-    init()
+  // Step 2: Once user is signed in and we have the mama's userId, subscribe to entries
+  useEffect(() => {
+    if (!user || !mamaUserId) return
+
+    const unsubscribe = subscribeToSharedEntries(mamaUserId, (data) => {
+      setEntries(data)
+    }, (err) => {
+      console.error('Failed to load entries:', err)
+    })
+
     return () => { if (unsubscribe) unsubscribe() }
+  }, [user, mamaUserId])
+
+  // Check notification state
+  useEffect(() => {
+    if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+      setNotifState('unsupported')
+    } else if (Notification.permission === 'granted') {
+      const key = `notif-subscribed-${code}`
+      if (localStorage.getItem(key)) {
+        setNotifState('subscribed')
+      }
+    } else if (Notification.permission === 'denied') {
+      setNotifState('denied')
+    }
   }, [code])
 
   async function handleNotifyMe() {
@@ -122,15 +118,14 @@ export default function FamilyFeed() {
     }
   }
 
-  async function handleFollow() {
-    if (!user || !mamaUserId) return
-    setFollowState('following')
+  async function handleSignIn() {
+    setSigningIn(true)
     try {
-      await followMama(user.uid, mamaUserId, mamaName)
-      setFollowState('followed')
-    } catch (err) {
-      console.error('Follow failed:', err)
-      setFollowState('idle')
+      await signInWithGoogle()
+    } catch {
+      // handled by AuthContext
+    } finally {
+      setSigningIn(false)
     }
   }
 
@@ -167,9 +162,37 @@ export default function FamilyFeed() {
     )
   }
 
+  // Not signed in — show sign-in prompt
+  if (!user) {
+    return (
+      <div className="ff">
+        <div className="ff-signin">
+          <div className="ff-signin-icon">🌸</div>
+          <h1 className="ff-signin-title">
+            {mamaName ? `${mamaName}'s Journal` : "Mom's Journal"}
+          </h1>
+          <p className="ff-signin-text">
+            {mamaName ? `${mamaName} invited you` : 'You\'ve been invited'} to see precious moments.
+            Sign in to view them securely.
+          </p>
+          <button
+            className="ff-signin-btn"
+            onClick={handleSignIn}
+            disabled={signingIn}
+          >
+            {signingIn ? 'Signing in...' : 'Sign in with Google'}
+          </button>
+          <p className="ff-signin-note">
+            Your baby photos are kept safe — only invited family and friends can see them.
+          </p>
+          <div className="ff-error-brand">Mom's Journal 🌸</div>
+        </div>
+      </div>
+    )
+  }
+
   const grouped = groupByDate(entries)
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches
-  const showFollowBtn = user && mamaUserId && user.uid !== mamaUserId && followState !== 'followed'
 
   return (
     <div className="ff">
@@ -191,22 +214,6 @@ export default function FamilyFeed() {
           {mamaName ? `${mamaName}'s Journal` : "Mom's Journal"}
         </h1>
         <p className="ff-header-subtitle">Shared moments from a new mama</p>
-
-        {/* Follow button for logged-in users */}
-        {showFollowBtn && (
-          <button
-            className="ff-follow-btn"
-            onClick={handleFollow}
-            disabled={followState === 'following'}
-          >
-            {followState === 'following' ? 'Saving...' : 'Save to my app'}
-          </button>
-        )}
-        {followState === 'followed' && user && (
-          <div className="ff-notify-status ff-notify-success">
-            Saved! Open your app to see {mamaName ? `${mamaName}'s` : 'these'} moments in "Following".
-          </div>
-        )}
 
         {/* Notification bell */}
         {notifState === 'idle' && (
