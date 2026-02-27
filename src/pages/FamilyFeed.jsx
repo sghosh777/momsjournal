@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { getInvite, subscribeToSharedEntries, subscribeToNotifications } from '../utils/firebase-public'
+import { followMama, isFollowing } from '../utils/storage'
+import { useAuth } from '../utils/AuthContext'
 import { format, parseISO, isToday, isYesterday } from 'date-fns'
 import './FamilyFeed.css'
 
@@ -32,6 +34,7 @@ function groupByDate(entries) {
 
 export default function FamilyFeed() {
   const { code } = useParams()
+  const { user } = useAuth()
   const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -39,14 +42,14 @@ export default function FamilyFeed() {
   const [mamaUserId, setMamaUserId] = useState(null)
   const [showInstall, setShowInstall] = useState(true)
   const [expandedPhoto, setExpandedPhoto] = useState(null)
-  const [notifState, setNotifState] = useState('idle') // idle | subscribing | subscribed | denied | unsupported
+  const [notifState, setNotifState] = useState('idle')
+  const [followState, setFollowState] = useState('idle') // idle | following | followed
 
   // Check if notifications are already granted
   useEffect(() => {
     if (!('Notification' in window) || !('serviceWorker' in navigator)) {
       setNotifState('unsupported')
     } else if (Notification.permission === 'granted') {
-      // Check localStorage to see if they already subscribed for this feed
       const key = `notif-subscribed-${code}`
       if (localStorage.getItem(key)) {
         setNotifState('subscribed')
@@ -55,6 +58,15 @@ export default function FamilyFeed() {
       setNotifState('denied')
     }
   }, [code])
+
+  // Check if already following
+  useEffect(() => {
+    if (user && mamaUserId && user.uid !== mamaUserId) {
+      isFollowing(user.uid, mamaUserId).then((yes) => {
+        if (yes) setFollowState('followed')
+      })
+    }
+  }, [user, mamaUserId])
 
   useEffect(() => {
     let unsubscribe = null
@@ -75,11 +87,9 @@ export default function FamilyFeed() {
           return
         }
 
-        // Get mama's display name and userId
         setMamaName(invite.mamaName || null)
         setMamaUserId(invite.userId)
 
-        // Subscribe to real-time shared entries
         unsubscribe = subscribeToSharedEntries(invite.userId, (data) => {
           setEntries(data)
           setLoading(false)
@@ -109,6 +119,18 @@ export default function FamilyFeed() {
     } catch (err) {
       console.error('Notification subscription failed:', err)
       setNotifState('denied')
+    }
+  }
+
+  async function handleFollow() {
+    if (!user || !mamaUserId) return
+    setFollowState('following')
+    try {
+      await followMama(user.uid, mamaUserId, mamaName)
+      setFollowState('followed')
+    } catch (err) {
+      console.error('Follow failed:', err)
+      setFollowState('idle')
     }
   }
 
@@ -147,6 +169,7 @@ export default function FamilyFeed() {
 
   const grouped = groupByDate(entries)
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+  const showFollowBtn = user && mamaUserId && user.uid !== mamaUserId && followState !== 'followed'
 
   return (
     <div className="ff">
@@ -168,6 +191,22 @@ export default function FamilyFeed() {
           {mamaName ? `${mamaName}'s Journal` : "Mom's Journal"}
         </h1>
         <p className="ff-header-subtitle">Shared moments from a new mama</p>
+
+        {/* Follow button for logged-in users */}
+        {showFollowBtn && (
+          <button
+            className="ff-follow-btn"
+            onClick={handleFollow}
+            disabled={followState === 'following'}
+          >
+            {followState === 'following' ? 'Saving...' : 'Save to my app'}
+          </button>
+        )}
+        {followState === 'followed' && user && (
+          <div className="ff-notify-status ff-notify-success">
+            Saved! Open your app to see {mamaName ? `${mamaName}'s` : 'these'} moments in "Following".
+          </div>
+        )}
 
         {/* Notification bell */}
         {notifState === 'idle' && (

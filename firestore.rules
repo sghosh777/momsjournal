@@ -37,5 +37,16 @@ service cloud.firestore {
         && request.resource.data.userId is string
         && request.resource.data.token is string;
     }
+
+    // Following: authenticated users can follow/unfollow and read their own follows
+    match /following/{docId} {
+      allow read: if request.auth != null
+        && request.auth.uid == resource.data.followerId;
+      allow create, update: if request.auth != null
+        && request.auth.uid == request.resource.data.followerId
+        && request.resource.data.keys().hasAll(['followerId', 'followingUserId', 'mamaName', 'createdAt']);
+      allow delete: if request.auth != null
+        && request.auth.uid == resource.data.followerId;
+    }
   }
 }

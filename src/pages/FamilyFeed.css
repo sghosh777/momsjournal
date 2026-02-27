@@ -100,6 +100,30 @@
   color: var(--color-text-lighter);
 }
 
+/* Follow button */
+.ff-follow-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--color-secondary), #5ab8b8);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 12px rgba(126, 200, 200, 0.3);
+  transition: all 0.2s ease;
+}
+
+.ff-follow-btn:active {
+  transform: scale(0.96);
+}
+
+.ff-follow-btn:disabled {
+  opacity: 0.7;
+}
+
 /* Notification button */
 .ff-notify-btn {
   display: inline-flex;
