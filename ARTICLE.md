@@ -75,7 +75,7 @@ The things PWAs *can't* do well — like accessing Bluetooth, NFC, or doing heav
 
 Here's something I didn't plan for. Every time I show Mom's Journal to someone — a demo at work, a casual conversation at a dinner — the reaction is the same. First it's "oh that's cool," and then it's "wait, can I use this?"
 
-A few of my girlfriends who are also new moms have started using it. They had the exact same problem: a camera roll full of thousands of photos with no story attached, family group chats blowing up for updates, and no interest in turning their baby into an Instagram brand. They opened the link, added it to their home screen, and started journaling that same day.
+A few of my girlfriends who are also new moms have started using it. They had the exact same problem: a camera roll full of thousands of photos with no story attached, family group chats blowing up for updates, and no interest in turning their baby into an Instagram brand. They opened the link, added it to their home screen, and started journaling that same day. I even have a few friends who are expecting right now and already want in — they want to be ready to capture everything from day one. And because it's a PWA, getting them set up is just sending a link in our group chat. No waiting for an app store approval, no "coming soon" — it's just *here you go, it's ready*.
 
 I built this to solve my own problem. I didn't set out to build a product. But it turns out when you solve a real problem well, people just... want it. And because it's a PWA, sharing it is as easy as sending a link. There's no "go download it from the store and search for..." — it's just *here, tap this*.
 
