@@ -4,9 +4,9 @@ A few weeks ago, I called my mom and asked her a simple question: *"Do you remem
 
 There was a long pause. She laughed a little, then said, *"Oh, you smiled a lot... I think it was around two months? Maybe three?"*
 
-She wasn't sure. And honestly, how could she be? It was decades ago. There were no smartphones, no quick way to jot it down in the moment. Life was happening fast, and the little details — the ones that feel so monumental when they're right in front of you — just slipped away.
+She wasn't sure. And honestly — no parent would be. It was decades ago. She was busy doing the actual hard work of raising me, not documenting it. There were no smartphones, no quick way to jot it down in the moment. She was living those moments, not logging them. And let's be real, she remembers the things that matter — she can still tell me exactly what I said the first time I got in trouble, word for word. (Thanks, Mom.)
 
-That conversation stuck with me. Because now I'm the parent. And I'm watching these moments happen every day — the first smile, the first time she grabbed my finger, the look on her face when she heard music for the first time. I don't want to forget any of it.
+But that conversation stuck with me. Because now I'm the parent. And I'm watching these moments happen every day — the first smile, the first time she grabbed my finger, the look on her face when she heard music for the first time. And I thought — what if I *could* capture these, not because my mom did anything wrong, but because now we have the tools to do something she never had the chance to?
 
 ## The Problem With the Obvious Solutions
 
