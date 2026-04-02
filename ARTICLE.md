@@ -1,123 +1,75 @@
-# Skip the App Store: How I Built and Distributed a Mobile App Using Just a Website
+# My Mom Couldn't Remember My First Smile. So I Built an App to Make Sure I Never Forget My Baby's.
 
-You don't need the App Store or Google Play to put an app on someone's phone. I built **Mom's Journal** — a mobile app for new moms to capture moments with their babies — and distributed it entirely through a URL. No $99/year Apple developer fee. No review process. No waiting.
+A few weeks ago, I called my mom and asked her a simple question: *"Do you remember when I gave my first smile?"*
 
-Here's how, and why you might want to do the same.
+There was a long pause. She laughed a little, then said, *"Oh, you smiled a lot... I think it was around two months? Maybe three?"*
 
-## What's a Progressive Web App?
+She wasn't sure. And honestly, how could she be? It was decades ago. There were no smartphones, no quick way to jot it down in the moment. Life was happening fast, and the little details — the ones that feel so monumental when they're right in front of you — just slipped away.
 
-A Progressive Web App (PWA) is a website that behaves like a native app. When someone visits your site on their phone, the browser offers to "Add to Home Screen." Once they do, it launches fullscreen — no address bar, no browser chrome. It looks and feels like something they downloaded from a store.
+That conversation stuck with me. Because now I'm the parent. And I'm watching these moments happen every day — the first smile, the first time she grabbed my finger, the look on her face when she heard music for the first time. I don't want to forget any of it.
 
-Mom's Journal does exactly this. Open the link, tap "Add to Home Screen," and you've got an app icon sitting right next to Instagram and WhatsApp. It launches instantly, works offline, and sends push notifications when grandma shares a new photo.
+## The Problem With the Obvious Solutions
 
-The user doesn't know or care that it's "just a website." It's an app on their phone. That's what matters.
+My first instinct was: I already have Google Photos. Every picture is backed up automatically. Problem solved, right?
 
-## What Makes a Website a PWA?
+Not quite. Google Photos captures **what happened**, but it completely misses **the story**. It doesn't know that the blurry photo from Tuesday morning was taken right after she laughed for the first time at the dog. It doesn't capture that I was exhausted but so full of joy I cried. The photo is there. The moment behind it is not.
 
-You need three things:
+Then there's social media. I know some parents love sharing on Instagram, and that's great for them — but it's not for me. I'm not comfortable putting my baby's face out there for the world to scroll past. These moments are personal. They belong to our family, not to an algorithm.
 
-**1. A Web App Manifest**
+But here's the thing — my family is *obsessed* with getting pictures. My parents, my in-laws, aunts, cousins — everyone wants updates. The group chat is basically a 24/7 request line: *"Send more photos!" "How is she today?" "We need videos!"* (They're somewhat addicted to it, honestly.) I love that they care so much, but keeping up with everyone's requests while also, you know, raising a baby — it's a lot.
 
-A small JSON file that tells the browser your app's name, icons, colors, and how it should launch.
+So I had a real problem:
+- I wanted to capture moments **with the story**, not just the photo
+- I didn't want to post on social media
+- My family needed a way to see updates **without me manually sending them to everyone**
+- And nothing out there did all three
 
-```json
-{
-  "name": "Mom's Journal",
-  "short_name": "MomsJournal",
-  "start_url": "/momsjournal/",
-  "display": "standalone",
-  "theme_color": "#FFF0F5",
-  "icons": [
-    { "src": "icons/icon-192.svg", "sizes": "192x192" },
-    { "src": "icons/icon-512.svg", "sizes": "512x512" }
-  ]
-}
-```
+## So I Built It. With AI.
 
-The key line is `"display": "standalone"` — that's what removes the browser UI and makes it feel native.
+I'm not a mobile app developer. I don't write Swift or Kotlin. A year ago, building a fully functional mobile app would have been a side project that took months — the kind of thing that lives on a to-do list forever.
 
-**2. A Service Worker**
+But we're living in a different world now. I used AI — specifically Claude — as my development partner, and I built **Mom's Journal** from idea to working app.
 
-A small script that sits between your app and the network. It caches your app shell so it loads instantly on repeat visits, and it can handle push notifications. For Mom's Journal, the service worker uses a network-first strategy — try to fetch fresh content, fall back to cache if offline.
+I didn't just ask AI to "make me an app." I worked *with* it. I described the problem. I made product decisions. I designed the experience I wanted. AI handled the heavy lifting of turning those decisions into working code — the kind of work that used to require a team of engineers and weeks of sprints.
 
-**3. HTTPS**
+Here's what the app does:
 
-PWAs require a secure connection. If you're hosting on GitHub Pages, Firebase, or Netlify, you get this for free.
+**For me (the parent):** I open the app, write a quick entry about what just happened, attach a photo or video, pick my mood, and save it. It takes 30 seconds. The entry is timestamped, searchable, and mine forever. It's a journal, not a feed.
 
-That's it. Those three pieces turn your React app (or Vue, or Svelte, or plain HTML) into something installable.
+**For my family:** I add them to "My Circle." When I share a moment, they get a text message with the photo and a link. They tap the link, and they're in — they can see everything I've chosen to share, get push notifications for new posts, and browse at their own pace. No app store download required. No account creation. Just a link.
 
-## How I Distribute It
+**For privacy:** Every entry is private by default. I choose what to share and with whom. Nothing goes on social media. Nothing is public. My baby's moments stay in our family.
 
-This is the best part. Distribution is a link. I text it to people. I put it in a group chat. I email it. There's no friction.
+## The Part That Surprises People
 
-For Mom's Journal, the flow looks like this:
+When I show this to colleagues, the first thing they do is try to find it in the App Store.
 
-1. Mom visits the link on her phone
-2. She signs in with Google
-3. The app prompts "Add to Home Screen"
-4. She taps it — done. App installed.
+It's not there. And it doesn't need to be.
 
-When she wants to share moments with family, she sends them an invite link. They open it, sign in, and get prompted to install too. The app even asks if they want push notifications so they know when new moments are posted.
+Mom's Journal is what's called a Progressive Web App. In plain English: it's a website that behaves like an app. When my family opens the link on their phone, they get a prompt to "Add to Home Screen." One tap, and it's right there on their phone next to Instagram and WhatsApp — with its own icon, opening fullscreen, sending notifications. It looks and feels like any app they've ever downloaded.
 
-No one had to search an app store. No one had to remember my app's name among millions of results. No one had to wait for a download. The app is **the link**.
+The difference? **Distribution is just a link.** I text it to my mom. She taps it. She's in. No searching the App Store. No downloads. No updates to install. She didn't even know it wasn't a "real" app until I told her.
 
-## The Stack Behind It
+This matters because the hardest part of any app isn't building it — it's getting people to actually install it. With a link, that problem disappears.
 
-Mom's Journal is a React app built with Vite and hosted on **GitHub Pages** (free). The backend runs on **Firebase** — Firestore for the database, Cloud Storage for photos and videos, Firebase Auth for Google sign-in, and Cloud Functions for sending push notifications and SMS alerts via Twilio.
+## What This Means (Beyond My Baby Photos)
 
-The entire hosting cost for the frontend is $0. Firebase's free tier covers a surprising amount of usage before you'd ever need to pay.
+I'm sharing this story not just because I'm proud of the app (though I am). I'm sharing it because it changed how I think about solving problems at work.
 
-The deployment is fully automated with GitHub Actions. Push to the main branch, and the app builds and deploys to GitHub Pages in about a minute.
+**The gap between "idea" and "working product" has collapsed.** I went from a conversation with my mom to a fully functional app — with a database, user authentication, photo storage, push notifications, and SMS alerts — in a fraction of the time it would have taken even a year ago. Not because I cut corners, but because AI handled the implementation complexity while I focused on the product decisions.
 
-## What PWAs Can and Can't Do
+**You don't need an app store to distribute an app.** Progressive Web Apps are a real, production-ready alternative. For internal tools, customer-facing utilities, dashboards, or anything that doesn't need Bluetooth or advanced hardware — you can skip the app store entirely. Faster to ship, easier to update, zero distribution cost.
 
-Let's be honest about the tradeoffs.
-
-**PWAs can:**
-- Install to the home screen with a custom icon
-- Work offline (cached content)
-- Send push notifications (Android and desktop; limited on iOS)
-- Access the camera, GPS, and other device APIs
-- Auto-update (no user action needed — they just get the latest version)
-
-**PWAs can't (or struggle to):**
-- Access Bluetooth, NFC, or advanced hardware APIs
-- Run heavy background processes
-- Get featured in app store search results
-- Use iOS push notifications reliably (it works on iOS 16.4+ but is still catching up)
-
-For many apps — especially content apps, journals, dashboards, tools, and social sharing — PWAs are more than enough.
-
-## Why Not Just Build a Native App?
-
-I considered it. Here's why I didn't:
-
-- **Cost**: Apple charges $99/year. Google charges a one-time $25. PWA costs $0.
-- **Time**: One codebase for all platforms. I'm not maintaining separate Swift and Kotlin projects.
-- **Review process**: App Store reviews take days and can reject you for arbitrary reasons. With a PWA, I deploy when I want.
-- **Updates**: Users always get the latest version. No "please update your app" screens.
-- **Distribution**: A URL is more shareable than an app store listing. For a family-focused app, this matters.
-
-The app store model makes sense for games, complex native experiences, and apps that need maximum discoverability. For everything else, it's overhead.
-
-## How to Get Started
-
-If you have an existing web app and want to make it installable:
-
-1. **Create a `manifest.json`** in your public folder with your app's name, icons, and `"display": "standalone"`.
-2. **Add a service worker** — even a basic one that caches your app shell. Google's Workbox library makes this easy if you don't want to write one from scratch.
-3. **Link the manifest** in your `index.html`: `<link rel="manifest" href="/manifest.json">`
-4. **Register the service worker** in your main JavaScript file.
-5. **Deploy to HTTPS** — GitHub Pages, Firebase Hosting, Netlify, or Vercel all work.
-
-Test with Chrome DevTools (Application tab) to verify everything is set up. Lighthouse will also audit your PWA and tell you what's missing.
+**AI-first doesn't mean replacing people. It means removing the bottleneck between having an idea and making it real.** I'm a product-minded person who used AI to build something that solved a real problem for my family. That same approach applies to work — identifying pain points, prototyping fast, validating with real users, and iterating.
 
 ## The Takeaway
 
-The app store isn't the only way to get an app on someone's phone. For Mom's Journal, a PWA was the right call — fast to build, free to host, and dead simple to share. A link is the most frictionless install experience there is.
+My mom doesn't remember my first smile. That's okay — she gave me a thousand other things I'll never forget.
 
-If you're building something and the app store feels like overkill, give PWAs a serious look. You might not need it.
+But when my daughter grows up and asks me the same question, I'll open Mom's Journal, scroll to the entry, and tell her the whole story — what she looked like, what I was feeling, what song was playing in the background. Because I captured it in 30 seconds on an app I built in a conversation with AI.
+
+The tools are here. The question isn't whether AI can help you build things. It's what problem you're going to solve first.
 
 ---
 
-*Mom's Journal is open source. Check it out on [GitHub](https://github.com/sghosh777/momsjournal).*
+*Mom's Journal is open source on [GitHub](https://github.com/sghosh777/momsjournal). If you want to try it or build something similar, reach out — I'm happy to share what I learned.*
